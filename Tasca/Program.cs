@@ -32,7 +32,7 @@ internal class Program
             Image tortugaFamella = new Image("imatges/tortugaFamella.png");
 
 
-            joc = new Joc(AlturaPantalla, AmpladaPantalla, fons, tauroMascle, tauroFamella, peixMascle, peixFamella, pop, tortugaMascle, tortugaFamella, 10, 10, 50, 50, 15, 3, 3);
+            joc = new Joc(AlturaPantalla, AmpladaPantalla, fons, tauroMascle, tauroFamella, peixMascle, peixFamella, pop, tortugaMascle, tortugaFamella, 10, 10, 50, 50, 15, 6, 6);
             joc.CrearPeixos();
 
             var loop = GameLoop.Create(_finestra.Graphics, OnUpdate, Fps);

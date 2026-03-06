@@ -8,6 +8,9 @@ using Heirloom.Desktop;
 abstract class Peix
 {
     protected static Random rnd = new Random();
+    protected Joc joc;
+    private const int AmpleCasella = 60;
+    private const int AltCasella = 40;   
     public enum Sexe
     {
         Famella, Mascle
@@ -15,18 +18,27 @@ abstract class Peix
     public Sexe sexe;
     public bool viu = true;
     protected Direccio direccioAct;
+    public Direccio DireccioAct
+    {
+        get => direccioAct;
+        set => direccioAct = value;
+    }
     protected bool EsUnaCria = true;
-    protected enum Direccio
+    public enum Direccio
     {
         Dreta, Esquerra, Adalt, Abaix
     }
-    protected int x, y, novaX, novaY;
+    public int x, y ;
+    protected int novaX, novaY;
     protected Image Imatge;
 
-    public Peix(Image imatge)
+    public Peix(Image imatgeMascle, Image imatgeFamella, Joc j, Sexe? sexeOpcional = null)
     {
-        Imatge = imatge;
-        GenerarSexeRandom();
+        joc = j;
+        if (sexeOpcional.HasValue) sexe = sexeOpcional.Value;
+        else GenerarSexeRandom();
+
+        Imatge = sexe == Sexe.Mascle ? imatgeMascle : imatgeFamella;
         DireccioInicial();
         GenerarPosicioRandom();
     }
@@ -42,7 +54,7 @@ abstract class Peix
     }
     public Rectangle Rect()
     {
-        return new Rectangle (x * 60, y * 40, 60, 40);
+        return new Rectangle (x * AmpleCasella, y * AltCasella, AmpleCasella, AltCasella);
     }
 
     public Sexe QuinSexeEs()
@@ -58,14 +70,12 @@ abstract class Peix
         {
             novaDireccio = (Direccio)rnd.Next(0, 4);
         } while(direccioAct == novaDireccio);
+        direccioAct = novaDireccio;
     }
 
     protected void GenerarSexeRandom()
     {
-        if (sexe == null)
-        {
-            sexe = (Sexe)rnd.Next(0, 2);
-        }
+        sexe = (Sexe)rnd.Next(0, 2);
     }
 
     public virtual void DireccioInicial()
@@ -114,11 +124,11 @@ abstract class Peix
         }
         else
         {
-            Interactuar(enemic);
+            Interactuar(enemic, this);
         }
     }
 
-    public abstract void Interactuar(Peix enemic);
+    public abstract void Interactuar(Peix enemic, Peix mare);
 
     public bool EstaViu()
     {
@@ -127,5 +137,15 @@ abstract class Peix
     public void Mor()
     {
         viu = false;
+    }
+
+    public Direccio DireccioAleatoriaFill(Direccio pare, Direccio mare)
+    {
+        Direccio nova;
+        do
+        {
+            nova = (Direccio)rnd.Next(0, 4);
+        } while (nova == pare || nova == mare);
+        return nova;
     }
 }

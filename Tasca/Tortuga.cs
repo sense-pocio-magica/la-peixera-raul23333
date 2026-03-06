@@ -6,12 +6,12 @@ using Heirloom.Desktop;
 
 class Tortuga : Peix 
 {
-    public Tortuga(Image imatge)
-        : base (imatge)
+    public Tortuga(Image imatgeMascle, Image imatgeFamella, Joc j, Sexe? sexeOpcional = null)
+        : base (imatgeMascle, imatgeFamella, j, sexeOpcional)
     {
     }
 
-    public override void Interactuar(Peix enemic)
+    public override void Interactuar(Peix enemic, Peix mare)
     {
         switch (enemic)
         {
@@ -19,7 +19,7 @@ class Tortuga : Peix
                 enemic.CanviarDireccio();
             break;
             case Tortuga when enemic.sexe != QuinSexeEs():
-                //Criar();
+                joc.Criar(this, mare);
             break;
             case Tortuga:
                 Mor();

@@ -11,6 +11,8 @@ class Joc
     private int alturaPantalla, ampladaPantalla;
     private int tauronsFamelles, tauronsMascles, peixosFamellas, peixosMascles, pops, tortuguesFamelles, tortuguesMascles;
     private Peixera peixera = new Peixera();
+    private int rondes = 0;
+    int estat = 2;
     public Joc(int alturaP, int ampladaP, Image fons, Image tauroMascle, Image tauroFamella, Image peixMascle, Image peixFamella, Image pop, Image tortugaMascle, Image tortugaFamella, int tauronsF, int tauronsM, int peixosF, int peixosM, int pops, int tortuguesF, int tortuguesM)
     {
         alturaPantalla = alturaP;
@@ -34,49 +36,109 @@ class Joc
 
     public void Iniciar(GraphicsContext g)
     {
-        g.DrawImage(Fons, new Rectangle(0, 0, ampladaPantalla, alturaPantalla));
-        foreach(var p in peixera.peixos)
+        switch (estat)
         {
-            if (p.EstaViu())
-            {
-                p.Dibuixar(g);
-                p.EsTrobaAUnAltrePeix(peixera.peixera!);
-                p.Moure();
-            }
+            case 1:
+                g.DrawImage(Fons, new Rectangle(0, 0, ampladaPantalla, alturaPantalla));
+                //if() estat = 2;
+            break;
+            case 2:
+                rondes ++;
+                if(rondes >= 100) estat = 3;
+
+                g.DrawImage(Fons, new Rectangle(0, 0, ampladaPantalla, alturaPantalla));
+                foreach(var p in peixera.peixos.ToList())
+                {
+                    if (p.EstaViu())
+                    {
+                        p.Dibuixar(g);
+                        p.Moure();
+                        p.EsTrobaAUnAltrePeix(peixera.peixera!);
+                    }
         }
         peixera.NetejarMorts();
+            break;
+            case 3:
+                g.DrawImage(Fons, new Rectangle(0, 0, ampladaPantalla, alturaPantalla));
+                //if() estat = 1;
+            break;
+        }
 
     }
 
     public void CrearPeixos()
     {
-        for(int i = 0; i <= tauronsFamelles; i ++) peixera.peixos.Add(new Tauro(TauroFamella));
+        for(int i = 0; i < tauronsFamelles; i ++)
+        {
+            Peix t = new Tauro(TauroMascle, TauroFamella, this, Peix.Sexe.Mascle);
+            peixera.peixos.Add(t);
+            peixera.peixera[t.x, t.y] = t;
+        }
 
-        for(int i = 0; i <= tauronsMascles; i ++) peixera.peixos.Add(new Tauro(TauroMascle));
+        for(int i = 0; i < tauronsMascles; i ++)
+        {
+            Peix t = new Tauro(TauroMascle, TauroFamella, this, Peix.Sexe.Famella);
+            peixera.peixos.Add(t);
+            peixera.peixera[t.x, t.y] = t;
+        }
 
-        for(int i = 0; i <= pops; i ++) peixera.peixos.Add(new Pop(Pop));
+        for(int i = 0; i < pops; i ++)
+        {
+            Peix p = new Pop(Pop, this);
+            peixera.peixos.Add(p);
+            peixera.peixera[p.x, p.y] = p;
+        }
 
-        for(int i = 0; i <= peixosFamellas; i ++) peixera.peixos.Add(new Salmo(PeixFamella));
+        for(int i = 0; i < peixosFamellas; i ++)
+        {
+            Peix p = new Salmo(PeixMascle, PeixFamella, this, Peix.Sexe.Famella);
+            peixera.peixos.Add(p);
+            peixera.peixera[p.x, p.y] = p;
+        }
 
-        for(int i = 0; i <= peixosMascles; i ++) peixera.peixos.Add(new Salmo(PeixMascle));
+        for(int i = 0; i < peixosMascles; i ++)
+        {
+            Peix p = new Salmo(PeixMascle, PeixFamella, this, Peix.Sexe.Mascle);
+            peixera.peixos.Add(p);
+            peixera.peixera[p.x, p.y] = p;
+        }
 
-        for(int i = 0; i <= tortuguesFamelles; i ++) peixera.peixos.Add(new Tortuga(TortugaFamella));
+        for(int i = 0; i < tortuguesFamelles; i ++)
+        {
+            Peix t = new Tortuga(TortugaMascle, TortugaFamella, this, Peix.Sexe.Famella);
+            peixera.peixos.Add(t);
+            peixera.peixera[t.x, t.y] = t;
+        }
 
-        for(int i = 0; i <= tortuguesMascles; i ++) peixera.peixos.Add(new Tortuga(TortugaMascle));
+        for(int i = 0; i < tortuguesMascles; i ++)
+        {
+            Peix t = new Tortuga(TortugaMascle, TortugaFamella, this, Peix.Sexe.Mascle);
+            peixera.peixos.Add(t);
+            peixera.peixera[t.x, t.y] = t;
+        }
     }
 
-    public void Criar(Peix peix)
+    public void Criar(Peix peix, Peix mare)
     {
         switch (peix)
         {
             case Tauro:
-                peixera.peixos.Add(new Tauro());
+                var tauroFill = new Tauro(TauroMascle, TauroFamella, this);
+                tauroFill.DireccioAct = tauroFill.DireccioAleatoriaFill(mare.DireccioAct, peix.DireccioAct);
+                peixera.peixos.Add(tauroFill);
+                peixera.peixera[tauroFill.x, tauroFill.y] = tauroFill;
             break;
             case Tortuga:
-                peixera.peixos.Add(new Tortuga());
+                var tortugaFill = new Tortuga(TortugaMascle, TortugaFamella, this);
+                tortugaFill.DireccioAct = tortugaFill.DireccioAleatoriaFill(mare.DireccioAct, peix.DireccioAct);
+                peixera.peixos.Add(tortugaFill);
+                peixera.peixera[tortugaFill.x, tortugaFill.y] = tortugaFill;
             break;
-            case Peix:
-                peixera.peixos.Add(new Peix());
+            case Salmo:
+                var peixFill = new Salmo(PeixMascle, PeixFamella, this);
+                peixFill.DireccioAct = peixFill.DireccioAleatoriaFill(mare.DireccioAct, peix.DireccioAct);
+                peixera.peixos.Add(peixFill);
+                peixera.peixera[peixFill.x, peixFill.y] = peixFill;
             break;
         }
     }

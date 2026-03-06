@@ -6,17 +6,25 @@ using Heirloom.Desktop;
 
 class Tauro : Peix 
 {
-    public Tauro(Image imatge)
-        : base (imatge)
+    private int vides = 75;
+    public Tauro(Image imatgeMascle, Image imatgeFamella,Joc j, Sexe? sexeOpcional = null)
+        : base (imatgeMascle, imatgeFamella, j, sexeOpcional)
     {
     }
 
-    public override void Interactuar(Peix enemic)
+    public override void Moure()
+    {
+        base.Moure();
+        vides --;
+        if(vides <= 0) Mor();
+    }
+
+    public override void Interactuar(Peix enemic, Peix mare)
     {
         switch (enemic)
         {
             case Tauro when enemic.sexe != QuinSexeEs():
-                //Criar();
+                joc.Criar(this, mare);
             break;
             case Tauro:
                 Mor();

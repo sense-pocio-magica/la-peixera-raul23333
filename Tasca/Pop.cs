@@ -6,8 +6,8 @@ using Heirloom.Desktop;
 
 class Pop : Peix 
 {
-    public Pop(Image imatge)
-        : base (imatge)
+    public Pop(Image imatge, Joc j)
+        : base (imatge, imatge, j)
     {
         sexe = Sexe.Mascle;
     }
@@ -44,7 +44,7 @@ class Pop : Peix
         base.Moure();
     }
 
-    public override void Interactuar(Peix enemic)
+    public override void Interactuar(Peix enemic, Peix mare)
     {
         switch (enemic)
         {

@@ -6,12 +6,12 @@ using Heirloom.Desktop;
 
 class Salmo : Peix 
 {
-    public Salmo(Image imatge)
-        : base (imatge)
+    public Salmo(Image imatgeMascle, Image imatgeFamella, Joc joc, Sexe? sexeOpcional = null)
+        : base (imatgeMascle, imatgeFamella, joc, sexeOpcional)
     {
     }
 
-    public override void Interactuar(Peix enemic)
+    public override void Interactuar(Peix enemic, Peix mare)
     {
         switch (enemic)
         {
@@ -19,7 +19,7 @@ class Salmo : Peix
                 Mor();
             break;
             case Salmo when enemic.sexe != QuinSexeEs():
-                //Criar();
+                joc.Criar(this, mare);
             break;
             case Salmo:
                 Mor();
