@@ -15,7 +15,7 @@ class Pop : Peix
     public override void GenerarPosicioRandom()
     {
         y = rnd.Next(0, 2) == 0 ? 0 : 19;
-        x = rnd.Next(0, 20);
+        x = rnd.Next(0, mida);
     }
 
     public override void Moure()

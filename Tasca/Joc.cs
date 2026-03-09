@@ -1,19 +1,17 @@
 namespace Joc;
 
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
-using System.Xml.Serialization;
 using Heirloom;
 using Heirloom.Desktop;
 class Joc
 {
-    private Image Fons, TauroMascle, TauroFamella, PeixMascle, PeixFamella, Pop, TortugaMascle, TortugaFamella;
+    private Image Fons, TauroMascle, TauroFamella, PeixMascle, PeixFamella, Pop, TortugaMascle, TortugaFamella, fonsInici, fonsFinal;
     private int alturaPantalla, ampladaPantalla;
     private int tauronsFamelles, tauronsMascles, peixosFamellas, peixosMascles, pops, tortuguesFamelles, tortuguesMascles;
     private Peixera peixera = new Peixera();
+    private Window finestra;
     private int rondes = 0;
-    int estat = 2;
-    public Joc(int alturaP, int ampladaP, Image fons, Image tauroMascle, Image tauroFamella, Image peixMascle, Image peixFamella, Image pop, Image tortugaMascle, Image tortugaFamella, int tauronsF, int tauronsM, int peixosF, int peixosM, int pops, int tortuguesF, int tortuguesM)
+    int estat = 1;
+    public Joc(int alturaP, int ampladaP, Image fons, Image tauroMascle, Image tauroFamella, Image peixMascle, Image peixFamella, Image pop, Image tortugaMascle, Image tortugaFamella, int tauronsF, int tauronsM, int peixosF, int peixosM, int pops, int tortuguesF, int tortuguesM, Image FonsInici, Image FonsFinal, Window Finestra)
     {
         alturaPantalla = alturaP;
         ampladaPantalla = ampladaP;
@@ -32,6 +30,9 @@ class Joc
         this.pops = pops;
         tortuguesFamelles = tortuguesF;
         tortuguesMascles = tortuguesM;
+        fonsInici = FonsInici;
+        fonsFinal = FonsFinal;
+        finestra = Finestra;
     }
 
     public void Iniciar(GraphicsContext g)
@@ -39,8 +40,11 @@ class Joc
         switch (estat)
         {
             case 1:
-                g.DrawImage(Fons, new Rectangle(0, 0, ampladaPantalla, alturaPantalla));
-                //if() estat = 2;
+                g.DrawImage(fonsInici, new Rectangle(0, 0, ampladaPantalla, alturaPantalla));
+                if (Input.CheckKey(Key.F1, ButtonState.Down))
+                {
+                    estat = 2;
+                }
             break;
             case 2:
                 rondes ++;
@@ -55,12 +59,16 @@ class Joc
                         p.Moure();
                         p.EsTrobaAUnAltrePeix(peixera.peixera!);
                     }
-        }
-        peixera.NetejarMorts();
+                }
+                peixera.NetejarMorts();
             break;
             case 3:
-                g.DrawImage(Fons, new Rectangle(0, 0, ampladaPantalla, alturaPantalla));
-                //if() estat = 1;
+                g.DrawImage(fonsFinal, new Rectangle(0, 0, ampladaPantalla, alturaPantalla));
+                MostrarRecompte(g);
+                if (Input.CheckKey(Key.F2, ButtonState.Down))
+                {
+                    finestra.Close();
+                }
             break;
         }
 
@@ -70,14 +78,14 @@ class Joc
     {
         for(int i = 0; i < tauronsFamelles; i ++)
         {
-            Peix t = new Tauro(TauroMascle, TauroFamella, this, Peix.Sexe.Mascle);
+            Peix t = new Tauro(TauroMascle, TauroFamella, this, Peix.Sexe.Famella);
             peixera.peixos.Add(t);
             peixera.peixera[t.x, t.y] = t;
         }
 
         for(int i = 0; i < tauronsMascles; i ++)
         {
-            Peix t = new Tauro(TauroMascle, TauroFamella, this, Peix.Sexe.Famella);
+            Peix t = new Tauro(TauroMascle, TauroFamella, this, Peix.Sexe.Mascle);
             peixera.peixos.Add(t);
             peixera.peixera[t.x, t.y] = t;
         }
@@ -142,4 +150,18 @@ class Joc
             break;
         }
     }
+
+    public void MostrarRecompte(GraphicsContext g)
+    {
+        var taurons = peixera.peixos.Count(p => p is Tauro && p.EstaViu());
+        var salmons = peixera.peixos.Count(p => p is Salmo && p.EstaViu());
+        var pops = peixera.peixos.Count(p => p is Pop && p.EstaViu());
+        var tortugues = peixera.peixos.Count(p => p is Tortuga && p.EstaViu());
+
+        g.DrawText($"Taurons: {taurons}", new Vector(50, 50), Font.Default, 40, TextAlign.Left);
+        g.DrawText($"Peixos: {salmons}", new Vector(50, 80), Font.Default, 40, TextAlign.Left);
+        g.DrawText($"Pops: {pops}", new Vector(50, 110), Font.Default, 40, TextAlign.Left);
+        g.DrawText($"Tortugues: {tortugues}", new Vector(50, 140), Font.Default, 40, TextAlign.Left);
+    } // volia fer un metode pq tot aixo es repeteix, pero clar no sabia com fer-ho pq si li passo un Peix peix 
+      // no puc fer is, he buscat com fer-ho pero hauría de fer algo de type o sino un <T> que hereti de peix o algo aixi ns
 }

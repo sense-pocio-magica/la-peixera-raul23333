@@ -11,6 +11,7 @@ abstract class Peix
     protected Joc joc;
     private const int AmpleCasella = 60;
     private const int AltCasella = 40;   
+    protected const int mida = 20;
     public enum Sexe
     {
         Famella, Mascle
@@ -22,7 +23,7 @@ abstract class Peix
     {
         get => direccioAct;
         set => direccioAct = value;
-    }
+    } // pq sino no podía accedir des de joc pq no es un fill
     protected bool EsUnaCria = true;
     public enum Direccio
     {
@@ -47,8 +48,8 @@ abstract class Peix
     {
         if (EsUnaCria)
         {
-            y = rnd.Next(0, 20);
-            x = rnd.Next(0, 20);
+            y = rnd.Next(0, mida);
+            x = rnd.Next(0, mida);
             EsUnaCria = false;
         }
     }
@@ -95,19 +96,19 @@ abstract class Peix
         switch (direccioAct)
         {
             case Direccio.Dreta:
-                novaX = (x + 1) % 20;
+                novaX = (x + 1) % mida;
             break;
 
             case Direccio.Esquerra:
-                novaX = (x - 1 + 20) % 20;
+                novaX = (x - 1 + mida) % mida;
             break;
 
             case Direccio.Adalt:
-                novaY = (y - 1 + 20) % 20;
+                novaY = (y - 1 + mida) % mida;
             break;
 
             case Direccio.Abaix:
-                novaY = (y + 1) % 20;
+                novaY = (y + 1) % mida;
             break;
         }
     }

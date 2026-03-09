@@ -10,7 +10,7 @@ internal class Program
     private static Joc joc;
     private const int AmpladaPantalla = 1200;
     private const int AlturaPantalla = 800;
-    private const int Fps = 1;
+    private const int Fps = 5;
 
     private static void Main()
     {
@@ -30,9 +30,11 @@ internal class Program
             Image pop = new Image("imatges/pop.png");
             Image tortugaMascle = new Image("imatges/tortugaMascle.png");
             Image tortugaFamella = new Image("imatges/tortugaFamella.png");
+            Image FonsInici = new Image("imatges/fonsInici.png");
+            Image FonsFinal = new Image("imatges/fonsFinal.png");
 
 
-            joc = new Joc(AlturaPantalla, AmpladaPantalla, fons, tauroMascle, tauroFamella, peixMascle, peixFamella, pop, tortugaMascle, tortugaFamella, 10, 10, 50, 50, 15, 6, 6);
+            joc = new Joc(AlturaPantalla, AmpladaPantalla, fons, tauroMascle, tauroFamella, peixMascle, peixFamella, pop, tortugaMascle, tortugaFamella, 10, 10, 50, 50, 15, 6, 6, FonsInici, FonsFinal, _finestra);
             joc.CrearPeixos();
 
             var loop = GameLoop.Create(_finestra.Graphics, OnUpdate, Fps);
@@ -44,4 +46,6 @@ internal class Program
     {
         joc.Iniciar(gfx);
     }
+    // Xavi no he utilitzat interfícies pq com tots utilitzen els mateixos mètodes doncs és millor amb abstract,
+    // i després jo he fet q quan es troben dos peixos q no interactuen doncs es queden aturats fins q algú se'ls mengi.
 }
